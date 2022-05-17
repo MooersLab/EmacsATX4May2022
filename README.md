@@ -1,8 +1,8 @@
-# EmacsATX4May2022: functional programming in Elisp
-![Version](https://img.shields.io/static/v1?label=ACA2021&message=0.1&color=brightcolor)
+# EmacsATX4May2022: functional programming in Emacs lisp
+![Version](https://img.shields.io/static/v1?label=EmacsATX2022&message=0.1&color=brightcolor)
 ![License: GNU](https://img.shields.io/badge/License-GNU-blue.svg)
 
-This repo contains the PDF of slides to a talk that I presented virtually on May 4th, 2022 to the EmacsATX Meetup group.  This is a basic intoduction. The slides include several ways to run elisp code, including from the terminal.
+This repo contains the PDF of slides to a talk that I presented virtually on May 4th, 2022 to the EmacsATX Meetup group. This is a basic intoduction. The slides include several ways to run elisp code, including from the terminal.
 
 This work is supported in part by the following funding sources:
 
