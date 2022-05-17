@@ -1,6 +1,6 @@
 # EmacsATX4May2022
 ![Version](https://img.shields.io/static/v1?label=ACA2021&message=0.1&color=brightcolor)
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/GNU General Public License v3.0)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)]
 
 ## README.md file for the talk about functional programming in Elisp
 
