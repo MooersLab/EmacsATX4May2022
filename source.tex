@@ -1,0 +1,593 @@
+ % !TEX TS-program = pdflatex --shell-escape
+%\documentclass[handout]{beamer} %slides+notes only
+%\documentclass[10pt,t]{beamer} %slides only
+% The laulatex is being updated. The following RequirePackage line is needed for now.
+%
+% Under Menu, select compiler 2017 (Legacy) to get animate to make a pdf with a working animation.
+% The 2019 compiler does not work as of 18 September 2020.
+%
+% Hold down the wheel or middle mouse button pause the animation.
+% Add the control keyword to see the controls.
+%
+\documentclass[aspectratio=169]{beamer}
+\RequirePackage{luatex85}
+\usepackage{animate}
+\usepackage{pgfpages}
+
+\usepackage{moresize}
+\usepackage{multicol}
+\usetheme{default}
+\beamertemplatenavigationsymbolsempty
+\hypersetup{pdfpagemode=UseNone} % don't show bookmarks on initial view
+%tables
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+% font
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{minted}
+\usepackage{fix-cm}
+\usepackage{fontspec}
+\usepackage{gensymb}
+\usepackage{tabularx,booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{upquote}
+\AtBeginDocument{%
+\def\PYZsq{\textquotesingle}%
+}
+
+
+\usepackage{enumitem}
+
+\newminted{python}{fontsize=\normalsize, 
+                   linenos=false,
+                   numbersep=8pt,
+                   gobble=4,
+                   breaklines,
+                   frame=lines,
+                   bgcolor=bgpython,
+                   framesep=3mm}
+
+\newminted{bash}{fontsize=\largesize, 
+                   linenos=false,
+                   numbersep=8pt,
+                   breaklines,
+                   gobble=4,
+                   frame=lines,
+                   bgcolor=bgbash,
+                   framesep=3mm}
+
+\newminted{elisp}{fontsize=\largesize, 
+                   linenos=false,
+                   numbersep=8pt,
+                   breaklines,
+                   gobble=4,
+                   frame=lines,
+                   bgcolor=bgelisp,
+                   framesep=3mm}
+                   
+\definecolor{bgpython}{rgb}{0.95,0.95,0.95}
+\definecolor{bgbash}{rgb}{0.95,0.85,0.75}
+\definecolor{bgelisp}{rgb}{0.95,0.85,0.75}
+
+%\setbeameroption{show only notes}
+\setsansfont{TeX Gyre Heros}
+\setbeamerfont{note page}{family*=pplx,size=\footnotesize} % Palatino for notes
+% "TeX Gyre Heros can be used as a replacement for Helvetica"
+% In Unix, unzip the following into ~/.fonts
+% In Mac, unzip it, double-click the .otf files, and install using "FontBook"
+%   http://www.gust.org.pl/projects/e-foundry/tex-gyre/heros/qhv2.004otf.zip
+
+% Center the title and increase its size
+\setbeamertemplate{frametitle}[default][center]
+\setbeamerfont{frametitle}{size=\huge}
+
+
+% named colors
+\definecolor{offwhite}{RGB}{249,242,255}
+\definecolor{foreground}{RGB}{25,25,25}
+\definecolor{background}{RGB}{255,255,255}
+\definecolor{title}{RGB}{100,0,0}
+\definecolor{gray}{RGB}{155,155,155}
+\definecolor{subtitle}{RGB}{50,0,0}
+\definecolor{hilight}{RGB}{102,255,204}
+\definecolor{vhilight}{RGB}{255,111,207}
+\definecolor{lolight}{RGB}{155,155,155}
+%\definecolor{green}{RGB}{125,250,125}
+
+% use those colors
+\setbeamercolor{titlelike}{fg=title}
+\setbeamercolor{subtitle}{fg=subtitle}
+\setbeamercolor{institute}{fg=gray}
+\setbeamercolor{normal text}{fg=foreground,bg=background}
+\setbeamercolor{item}{fg=foreground} % color of bullets
+\setbeamercolor{subitem}{fg=gray}
+\setbeamercolor{itemize/enumerate subbody}{fg=gray}
+\setbeamertemplate{itemize subitem}{{\textendash}}
+\setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
+\setbeamerfont{itemize/enumerate subitem}{size=\footnotesize}
+
+% page number
+\setbeamertemplate{footline}{%
+    \raisebox{5pt}{\makebox[\paperwidth]{\hfill\makebox[20pt]{\color{gray}
+          \scriptsize\insertframenumber}}}\hspace*{5pt}}
+
+% add a bit of space at the top of the notes page
+\addtobeamertemplate{note page}{\setlength{\parskip}{12pt}}
+
+% a few macros
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ig}{\includegraphics}
+\newcommand{\subt}[1]{{\footnotesize \color{subtitle} {#1}}}
+
+\usepackage{latexsym} % for squares for the check-list environment
+\newenvironment{checklist}{%
+  \begin{list}{}{}% whatever you want the list to be
+  \let\olditem\item
+  \renewcommand\item{\olditem[$\Box$] }
+}{%
+  \end{list}
+}
+
+
+% title info
+\title{Functional elisp from the beginning} 
+\author{\textbf{\large{Blaine Mooers, PhD} \\ blaine-mooers@ouhsc.edu \\ 405-271-8300}}
+\institute{{Department of Biochemistry \& Molecular Biology}\\[2pt]{University of Oklahoma Health Sciences Center, Oklahoma City} }
+% to hide auto date,use \date{}
+\date{Austin Emacs Meetup\\ Austin, Texas\\ Virtual Meeting\\ 4 May 2022}
+
+\begin{document}
+
+% title slide
+{
+\setbeamertemplate{footline}{} % no page number here
+\frame{
+  \titlepage
+ \note{
+Hi, I am Blaine Mooers.
+I am an associate professor of Biochemistry and Molecular Biology at the University of Oklahoma Health Sciences Center in Oklahoma City, Oklahoma.
+I am protein crystallographer or a so-called structural biology.
+I work at the insection of chemistry, biology, physics, and computing.
+
+I attended the meeting in February and volunteered to give a talk on functional programming with Emacs lisp to force myself to learn some elisp and a little about functional programming.
+I first started popping open Emacs several years ago for the purpose of making a yasnippet snippet library for doing literate programming with the molecular graphics program PyMOL.
+I was making this library available for 20 leading text editors.
+At the time, my favorite text editor for getting things done fast was TextMate.
+In the process, I learned some basic Vim. 
+A year ago, I decided to give Emacs a try.
+Several months ago, I ditched evil, mode and I am trying to master the Emacs Key bindings.
+
+I poked around in Spacemacs, Doom, Prelude and SciMax long enough to decide to go back to the basics in Gnu Emacs.
+In the 
+I have built and rebuilt my configuration file several times.
+I discovered that the chemacs2, the Emacs profiler switcher, is great for retaining a broken configuration while rebuilding a second one.
+}
+} }
+
+\section{Introduction}
+\subsection{Who am I}
+
+\section{Workflow in the Mooers Lab}
+\begin{frame}
+\frametitle{Workflow in the Mooers Lab}
+\begin{center}
+    \includegraphics[width=0.79\textwidth, angle=0]{./Figures/workflow}
+\end{center}
+\end{frame}
+\note{
+My lab uses X-ray crystallography to determine the atomic structures of protiens and nucleic acids important in human medicine. 
+This figure shows our workflow
+We grow crystals of purified proteins and RNA like the crystal of RNA in the upper left. 
+We shoot the crystal with X-rays as we slowly rotate the crystal on a X-ray diffraction instrument, as shown in the top center.
+The image in the upper right shows thousands of diffraction spots from a two degree rotation.
+We rotate the crystal 180 degrees to collect a full dataset with 90 images. 
+
+%We integrate, merge, and scale the diffraction spots. and then 
+We take an inverse Fourier transform of the diffraction data to generate an electron density map like the one shown in the bottom, center panel.
+We fit molecular models into the maps on computers and refine the model using maximum likelihood methods to improve its fit. 
+The final model is then used in a molecular graphics program like PyMOL to make images for publication like the one in the lower right. 
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   3  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 3
+\section{Cover images made with PyMOL}
+\begin{frame}
+\frametitle{Cover images made with PyMOL}
+
+\begin{center}
+    \includegraphics[width=0.79\textwidth, angle=0]{./Figures/trimmedCoverFigs}
+\end{center}
+
+\end{frame}
+\note{
+PyMOL has over 100,000 users and is the most popular program for making images of protein structures for publication. 
+PyMOL has about 500 commands and 600 parameters that enable the user to exert exquisite control over the appearance of the image.
+Shown are four examples of images made with PyMOL on the covers of several top journals.
+
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% 4  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 4
+\section{PyMOL GUI}
+\begin{frame}
+%\frametitle{PyMOL GUI}
+
+\begin{center}
+    \includegraphics[width=0.72\textwidth, angle=0]{./Figures/retkinase}
+\end{center}
+
+\end{frame}
+\note{
+This the GUI for PyMOL. 
+Python can be run with pulldown menus, commands at the PyMOL prompt, or with scripts.
+The PyMOL prompt is actually an interactive Python prompt.
+PyMOL is written in C for speed, but wrapped with Python for ease of extensibility.
+There are about 300 plugins that users have made for PyMOL.
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% 5  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 5
+\section{Customized molecular representations}
+\begin{frame}
+\frametitle{Customized molecular representations}
+
+\begin{center}
+    \includegraphics[width=0.72\textwidth, angle=0]{./Figures/cartoonsHairpin}
+\end{center}
+
+\end{frame}
+\note{
+These are four representations of a 27-nucleotide RNA hairpin.
+The default cartoon from PyMOL is on the left.
+The three representations to the right were made using Python scripts that access the PyMOL API.
+Their code is in our snippet library.
+These examples demonstarte that PyMOL can be extended.
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%% 5  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 5
+\section{Missing molecular representations}
+\begin{frame}
+\frametitle{Missing molecular representations}
+
+\begin{center}
+    \includegraphics[width=0.65\textwidth, angle=0]{./Figures/hairpinAOs}
+\end{center}
+\url{https://github.com/MooersLab/pymolshortcuts}\\
+\url{https://github.com/MooersLab/pymolsnips}
+\end{frame}
+\note{
+These are four representations of a 27-nucleotide RNA hairpin.
+The default cartoon from PyMOL is on the left.
+The three representations to the right were made using Python scripts that access the PyMOL API.
+Their code is in our snippet library.
+These examples demonstarte that PyMOL can be extended.
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%% 7 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 7
+\section{org-yas pull down}
+\begin{frame}
+\frametitle{orgpymolpysnips}
+
+\begin{center}
+    \includegraphics[width=0.8\textwidth, angle=0]{./Figures/org-yas.png}
+\end{center}
+\url{https://github.com/MooersLab/orgpymolpysnips}
+\end{frame}
+\note{
+The orgpymolpysnips librarys has 260 snippet divided into 20 categories for use in org-mode docuements.
+These categories serve as groups in yasnippets that appear as submenus in the org-mode pulldown.
+They are prepended with pymolpy- to distinguish them from non-PyMOL related groups of snippets.
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%% 8 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 8
+\section{Code block}
+\begin{frame}
+\frametitle{Code block to make one image}
+
+\begin{center}
+    \includegraphics[width=0.8\textwidth, angle=0]{./Figures/combined1.png}
+\end{center}
+\url{https://emacsconf.org/2021/talks/molecular/}
+\end{frame}
+\note{
+Each snippet is flanked by the org-mode source block begin and end lines.
+The top line specifies the kernel that calls PyMOL's Python API to run the code.
+You place cursor on the top line or in the code block and enter C-c C-c. 
+}
+
+
+\section{Result block}
+\begin{frame}
+%\frametitle{Code block to make one image}
+
+\begin{center}
+    \includegraphics[width=0.80\textwidth, angle=0]{./Figures/pymol1out.png}
+\end{center}
+
+\end{frame}
+\note{
+I sent the output to a drawer.
+This enables seeing the image in the file but it needs to be modest in size else scrolling will be difficult.
+It may be best to close most of the code blocks and result blocks most of the time to avoid lags.
+}
+
+
+% %%%%%%%%%%%%%%%%%%%  2  %%%%%%%%%%%%%%%%%%%%%%%    
+% % Slide 2
+\begin{frame}
+\frametitle{Levels of expertise}
+ \begin{center}
+\includegraphics[scale=0.79]{./Figures/Dreyfus}
+\end{center}
+\small{Dreyfus, S. E. and Dreyfus, H. L. (1980) A five-stage model of the mental activities involved in directed skill acquisition. DTIC Document.}
+\end{frame}
+\note{
+Two Dreyfus brothers at UC Berkely proposed a model of expertise that had five levels in a report to the Department of Defense in the later 1970s. 
+I find this model to be very useful. 
+The report describes the features the different levels of expertise.
+I would put XXX XXX, the speaker at the last meeting, was in the proficient to expert category.
+I put myself in the advanced beginner category.
+One way to move from beginning an advanced beginner to a competant user is to give talks about topics that you yet to have mastered.
+
+I will assume no prior knowledge of emacs lisp.
+I spent several years editing my config file to add packages without understanidng the code in my config file.
+I got away with installing hundreds of packages without undering any elisp.
+This talk is for such a person. 
+I will cover just enough elisp that you will be able to follow along the introduciton to the functional features of elisp.
+Of course, I do not have time to cover all of elisp.
+I will assume that you have done at least a modest amount of programming.
+}
+
+
+% %%%%%%%%%%%%%%%%%%%  3  %%%%%%%%%%%%%%%%%%%%%%%    
+% % Slide 2
+\begin{frame}
+ \begin{center}
+\includegraphics[scale=0.2]{./Figures/FunctionalProgrammingSimplified}
+\end{center}
+\end{frame}
+\note{
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%   2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 2
+\begin{frame}
+\frametitle{Functional Programmming}
+\Large{
+\begin{itemize}[font=$\bullet$\scshape\bfseries]
+\item A programming paradigm characterized by the use of \textbf{mathematical functions} and the avoidance of \textbf{side effects}.
+\vspace{5mm}
+\item A programming style that uses only \textbf{pure functions} without \textbf{side effects}.
+\end{itemize}
+}
+\end{frame}
+\note{
+Functional programming has a 60+ year history.
+
+These are the traditional definitions of functional programmming.
+Eric Normand discuss why this traditional definition is programmatic. }
+
+%%%%%%%%%%%%%%%%%%%%%%   2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 2
+\begin{frame}
+\frametitle{Features of functional programmming}
+\Large{
+\begin{itemize}[font=$\bullet$\scshape\bfseries]
+\item Variables are immutable.
+\item Recursion instead of loops.
+\item Pure functions without side effects.
+\item Higher order functions 
+(functions that take functions as arguments) 
+\item Division of programs into actions, calculations, and data (functional thinking).
+\end{itemize}
+}
+\end{frame}
+\note{
+Functional programming has a 60+ year history.
+
+These are the traditional definitions of functional programmming.
+Eric Normand discuss why this traditional definition is programmatic. }
+
+
+
+
+\begin{frame}
+\frametitle{Why learn functional programming \\(at least programming with functional thinking)?}
+\Large{
+\begin{itemize}[font=$\bullet$\scshape\bfseries]
+\item Cleaner code that is easier to debug and maintain
+\item More elegant 
+\item Sometimes faster code
+\item Makes you a better programmer
+\vspace{5mm}
+\end{itemize}
+}
+\end{frame}
+\note{
+Functional programming has a 60+ year history.
+
+These are the traditional definitions of functional programmming.
+Eric Normand discuss why this traditional definition is programmatic. }
+
+
+
+% %%%%%%%%%%%%%%%%%%%  2  %%%%%%%%%%%%%%%%%%%%%%%    
+% % Slide 2
+\begin{frame}
+\frametitle{Two topics}
+\Large{
+\vspace{5mm}
+\begin{itemize}[font=$\bullet$\scshape\bfseries]
+\item Ways to execute elisp code 
+\vspace{5mm}
+\item Functional features of elisp
+\end{itemize}
+}
+\end{frame}
+\note{
+The cover of this book by Alvin Alexander was to good to be pass over.
+It expresses the angst about functional programming that is similar to 
+the angst that procedural-only programmers have when the topic of object-oriented 
+programming is raised.
+}
+
+
+\section{Methods of running elisp}
+
+%%%%%%%%%%%%%%%%%%%%%%   2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% Slide 2
+\begin{frame}
+\frametitle{Methods of running elisp}
+\Large{
+% requires the enumitem package
+\begin{itemize}[font=$\bullet$\scshape\bfseries]
+    \item elisp file (.el)\\
+    (documentation 'main) ; C-x C-e at space to right of `)'.\\
+    (documentation 'main) ; C-M-x inside of the parentheses.
+    \vspace{4mm}    
+    \item scratch buffer ; C-j
+    \vspace{4mm}
+    \item M-x eval-buffer ; evaluate whole buffer
+    \item M-x eval-region ; evaluate region
+\end{itemize}
+}
+\end{frame}
+\note{
+LISP is a contraction of List Processing.
+Lists are the 
+ElISP Here are some examples of images made in PyMOL on the covers of leading journals. 
+}
+
+%%%%%%%%%%%%%%%%%%%%%%   2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+
+
+% Slide 2
+\begin{frame}
+\frametitle{Elisp REPLs (3 options inside Emacs)}
+\Large{
+% requires the enumitem package
+\begin{itemize}[font=$\bullet$\scshape\bfseries]
+    \item M-: ; REPL in mini buffer
+    \vspace{4mm}    
+    \item M-x ielm ; eval one expression at a time\\
+       (defalias 'erepl 'ielm) \\
+    M-x erepl
+    \vspace{4mm}
+     \item M-x eshell
+\end{itemize}}
+\end{frame}
+\note{
+The first option is to use ielm, which is in MELPA.
+This name is not easy to remember.
+I defined an alias to erepl.
+
+Outside of Emacs, you define an alias. 
+
+https://github.com/kanaka/mal
+}
+
+
+\defverbatim[colored]\exampleCodeA{
+\large{
+\begin{elispcode}
+    alias erepl="rlwarp emacs --batch --eval \"(progn (require 'cl) (loop (print (eval (read)))))\""
+\end{elispcode}
+}
+}
+
+% Slide 2
+\begin{frame}
+\frametitle{elisp REPL ouside of Emacs}
+\Large{
+\exampleCodeA
+Source: \url{https://www.reddit.com/r/emacs/comments/58ciar/question_can_elis_be_run_outside_of_emacs/}
+}
+\end{frame}
+\note{
+The first option is to use ielm, which is in MELPA.
+This name is not easy to remember.
+I defined an alias to erepl.
+
+Outside of Emacs, you define an alias. 
+
+https://github.com/kanaka/mal
+}
+
+
+
+
+\defverbatim[colored]\exampleCodeC{
+\large{
+\begin{pythoncode}
+    #!emacs --script
+    (defun main ()
+      "Print the version of Emacs and print arguments as a list. 
+      Example: chmod +x test5.el && ./test5.el dog cat
+      Modified test4.el script by Dr. John Kitchin found here: 
+      https://kitchingroup.cheme.cmu.edu/blog
+      /2014/08/06/Writing-scripts-in-Emacs-lisp/"
+    (print (version))
+    (print (format "Called with %s" command-line-args))
+    (print (format "You did it! You passed in %s!" command-line-args-left))
+    (print (format "This is the documentation string for main():
+      %s" (documentation 'main))) )
+    (when (member "-scriptload" command-line-args) (main))
+\end{pythoncode}
+}
+}
+% Slide 24
+\begin{frame}
+\frametitle{Elisp script}
+\exampleCodeC
+\end{frame}
+
+
+
+
+
+\defverbatim[colored]\exampleCodeC{
+\large{
+\begin{pythoncode}
+    #+BEGIN_SRC emacs-lisp :results value scalar
+    (*40 1000 1000 1000 1000 1000 1000 1000)
+    #+END_SRC
+    #+RESULTS:
+    : 40000000000000000000
+\end{pythoncode}
+}
+}
+% Slide 24
+\begin{frame}
+\frametitle{Code block with output in the RESULTS drawer}
+Place cursor inside code block and enter C-c C-c to run the code.
+\exampleCodeC
+Note that the ``:results value scalar'' was needed with emacs-lisp.
+In the org-babel configuration, emacs-lisp has to be in the list of languages.
+\end{frame}
+
+
+\defverbatim[colored]\exampleCodeC{
+\large{
+\begin{pythoncode}
+    (setq show-paren-delay 0)
+    (show-paren-mode t)
+\end{pythoncode}
+}
+}
+% Slide 24
+\begin{frame}
+\frametitle{Config for matching parentheses}
+\exampleCodeC
+ \textquotesingle{}
+\end{frame}
+
