@@ -7,10 +7,11 @@
 This repo contains the PDF of the slides to a talk I presented virtually on May 4th, 2022 at1 the EmacsATX Meetup. 
 This is a basic introduction to functional programming in elisp. 
 
-The slides also include several ways to run elisp code, including from the terminal outside of Emacs via an elisp repl (very cool!) and a script file.
+The slides also include several ways to run elisp code, including from the terminal outside Emacs via an elisp REPL (very cool!) and a script file.
 The former lets you do calculations in the terminal without firing up Emacs.
 The latter is helpful for automated data analysis pipelines where you run an elisp function on an input file and gather the output in another file.
-This lets you harness the full power of Emacs without starting the GUI.6
+This lets you harness the full power of Emacs full a bash script without using the GUI.
+This opens up all kinds of possibilities.
 
 
 ## Update history
@@ -18,7 +19,7 @@ This lets you harness the full power of Emacs without starting the GUI.6
 |Version      | Changes                                                                                                                                    | Date                 |
 |:-----------:|:------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------:|
 | Version 0.2 |   Added badges, funding, and update table.                                                                                                 | 2024 May 24          |
-| Version 0.3 |   Added the source tex file to ease copying and resuing the elisp code.                                                                    | 2024 July 24          |
+| Version 0.3 |   Added the source tex file to ease copying and reusing the elisp code.                                                                    | 2024 July 24          |
 
 ## Sources of funding
 
