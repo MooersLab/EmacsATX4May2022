@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
-This repo contains the PDF of the slides to a talk I presented virtually on May 4th, 2022 at1 the EmacsATX Meetup. 
+This repo contains the PDF of slides for a talk I presented virtually on May 4th, 2022 at the EmacsATX Meetup. 
 This is a basic introduction to functional programming in elisp. 
 
 The slides also include several ways to run elisp code, including from the terminal outside Emacs via an elisp REPL (very cool!) and a script file.
